@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 //cout << fixed << setprecision(10);
- #define rep(i, N)  for(int i=0;i<(N);i++)
+#define rep(i, N)  for(int i=0;i<(N);i++)
 #define all(x) (x).begin(),(x).end()
 #define popcount(x) __builtin_popcount(x)
 using ll = long long;
@@ -17,22 +17,28 @@ const int dy[4] = { 0,1,0,-1 };
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    int n;
-    cin>>n;
-    string s;
-    cin>>s;
-    vector<vector<int>> dp(n+1,vector<int>(n+1));   //@dp[i][j]:一つ目のsubstrのbackがi,二つ目のsubstrのbackがjとなる時の、substrのlenの最大値
-    dp[0][0]=0;
-    rep(i,n)rep(j,n){
-       if(i>=j)continue;
-        if(s[i]==s[j]){
-            chmax(dp[i+1][j+1],min(j-i,dp[i][j]+1));    //dp[i][j]は最大でもj-i
-        }
+    int n,m;
+    cin>>n>>m;
+    vector<vector<ll>> dist(n,vector<ll>(n,INFL));
+    rep(i,m){
+        ll a,b,c;
+        cin>>a>>b>>c;
+        a--;b--;
+        dist[a][b]=c;
+        dist[b][a]=c;
     }
-    int ans=0;
-    rep(i,n+1)rep(j,n+1){
-        if(i>=j)continue;
-        chmax(ans,dp[i][j]);
+    rep(i,n)dist[i][i]=0;
+    rep(k,n)rep(i,n)rep(j,n){
+        chmin(dist[i][j],dist[i][k]+dist[k][j]);
+    }
+    ll ans=INFL;
+    rep(i,n){
+        ll maxdist=0;
+        rep(j,n){
+            if(i==j)continue;
+            chmax(maxdist,dist[i][j]);
+        }
+        chmin(ans,maxdist);
     }
     cout<<ans<<endl;
 }

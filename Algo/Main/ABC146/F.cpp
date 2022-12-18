@@ -1,9 +1,8 @@
 #include<bits/stdc++.h>
 using namespace std;
 //cout << fixed << setprecision(10);
- #define rep(i, N)  for(int i=0;i<(N);i++)
+#define rep(i, N)  for(int i=0;i<(N);i++)
 #define all(x) (x).begin(),(x).end()
-#define popcount(x) __builtin_popcount(x)
 using ll = long long;
 using ld = long double;
 using Graph = vector<vector<int>>;
@@ -19,20 +18,13 @@ template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
     int n;
     cin>>n;
+    int m;
+    cin>>m;
     string s;
     cin>>s;
-    vector<vector<int>> dp(n+1,vector<int>(n+1));   //@dp[i][j]:一つ目のsubstrのbackがi,二つ目のsubstrのbackがjとなる時の、substrのlenの最大値
-    dp[0][0]=0;
-    rep(i,n)rep(j,n){
-       if(i>=j)continue;
-        if(s[i]==s[j]){
-            chmax(dp[i+1][j+1],min(j-i,dp[i][j]+1));    //dp[i][j]は最大でもj-i
-        }
+    vector<int> dp(n+1,INF);
+    vector<int> prev(n+1,-1);
+    rep(i,n){
+        fo
     }
-    int ans=0;
-    rep(i,n+1)rep(j,n+1){
-        if(i>=j)continue;
-        chmax(ans,dp[i][j]);
-    }
-    cout<<ans<<endl;
 }

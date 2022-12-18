@@ -25,23 +25,21 @@ int main() {
     int n;
     cin>>n;
     vector<ll> a(n);
-    int neg=0;
-    rep(i,n){
-        cin>>a[i];
-        if(a[i]<0)neg++;
-    }
-    if(neg%2==0){
+    for(auto&aa:a)cin>>aa;
+    int cnt=0;
+    for(auto aa:a)if(aa<=0)cnt++;    //マイナスの個数
+    if(cnt%2==0){
         ll sum=0;
-        rep(i,n)sum+=abs(a[i]);
+        for(auto aa:a)sum+=abs(aa);
         cout<<sum<<endl;
-    }
-    else{
-        ll sub=INFL;
-        rep(i,n)sub=min(sub,abs(a[i]));
-        
+    }else{
+        ll absMin=INFL;
+        for(auto aa:a){
+            absMin=min(absMin,abs(aa));
+        }
         ll sum=0;
-        rep(i,n)sum+=abs(a[i]);
-        sum-=2*sub;
+        for(auto aa:a)sum+=abs(aa);
+        sum-=2*absMin;
         cout<<sum<<endl;
     }
 }
