@@ -16,7 +16,6 @@ const int dx[4] = { 1,0,-1,0 };
 const int dy[4] = { 0,1,0,-1 };
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
-
 template <typename X>
 class SegmentTree {
     using fx = function<X(X, X)>;
@@ -68,23 +67,35 @@ public:
 
     X get(int pos){return dat[pos+n-1];}
 };
+
+/*
+@A:圧縮したい列
+@B:圧縮したあとの列
+*/
+template<class T>int LIS(vector<T> &a,bool strict=true) {
+    int n=(int)a.size();
+    vector<T> aval;
+    for(auto aa:a)aval.push_back(aa);
+    sort(all(aval));
+    aval.erase(unique(all(aval)),aval.end());
+    SegmentTree<int> dp(n+1,[](int a,int b){return max(a,b);},0);       //dp[i]=最後尾がiとなるようなLISの最大値
+    int res=0;
+    for(int i=0;i<n;i++){
+        int h=lower_bound(all(aval),a[i])-aval.begin();
+        h++;
+        int upper=h;
+        if(!strict)upper++;
+        int A=dp.query(0,upper);
+        if(dp.query(h,h+1)<A+1){
+            dp.update(h,A+1);
+            chmax(res,A+1);
+        }
+    }
+    return res;
+}
 int main() {
-    int n;
-    cin>>n;
-    SegmentTree<int> A(n,[](int a,int b){return gcd(a,b);},0);
-    rep(i,n){
-        int a;
-        cin>>a;
-        A.set(i,a);
-    }
-    A.build();
-    int ans=-1;
-    for(int i=1;i<n-1;i++){
-        int L=A.query(0,i);
-        int R=A.query(i+1,n);
-        chmax(ans,gcd(L,R));
-    }
-    chmax(ans,A.query(1,n));
-    chmax(ans,A.query(0,n-1));
-    cout<<ans<<endl;
+    int n;cin>>n;
+    vector<int> a(n);
+    rep(i,n)cin>>a[i];
+    cout<<n-LIS(a,false)<<endl;
 }
