@@ -17,40 +17,34 @@ template<class T>void chmax(T& x, T y) { if (x < y)x = y; }
 template<class T>void chmin(T& x, T y) { if (x > y)x = y; }
 
 
-const int TryMax = 1e6;
+const int TryMax = 255000;
 class Solve {
 private:
     vector<int> X, Y;
     int N;
     vector<int> ans;
-    double score(vector<int> points) {       //OK
+    double Score(vector<int> points) {       //OK
         double ret = 0;
         rep(i, N) {
             ret += dist(points[i], points[i + 1]);
         }
-        return (1e6)/ret;
+        return ret;
     }
     int random(int a, int b) {
         int rnd = rand();
         return a + rnd % (b - a + 1);
     }
-    double randDouble() {
+    double RandDouble() {
         return 1.0 * rand() / RAND_MAX;
     }
     double dist(int i, int j) {
         return sqrt((X[i] - X[j]) * (X[i] - X[j]) + (Y[i] - Y[j]) * (Y[i] - Y[j]));
     }
-    void show() {
+    void Show() {
         for (auto a : ans)cout << a + 1 << endl;
     }
-
-public:
-    void scan(int _N) {      //OK
-        X.resize(_N), Y.resize(_N);
-        N = _N;
-        rep(i, N) {
-            cin >> X[i] >> Y[i];
-        }
+    void Easy(){
+        rep(i,N)ans.push_back(i);
     }
     void Greedy() {
         int now = 0;
@@ -74,17 +68,16 @@ public:
         ans.push_back(0);
     }
     void Climb() {
-        Greedy();
         int q = TryMax;
-        int currentMax = score(ans);
+        int currentMax = Score(ans);
         //cout<<currentMax<<endl;
         while (q--) {
-            int L = random(2, N);
-            int R = random(2, N);
+            int L = random(1, N);
+            int R = random(1, N);
             if (R < L)swap(L, R);
             reverse(ans.begin() + L, ans.begin() + R);
-            int ChangedScore = score(ans);
-            if (currentMax >= ChangedScore) {
+            int ChangedScore = Score(ans);
+            if (currentMax > ChangedScore) {
                 reverse(ans.begin() + L, ans.begin() + R);
             }
             else {
@@ -94,32 +87,47 @@ public:
         //cout<<currentMax<<endl;
     }
     void Yakinamasi() {
+        //cout<<Score(ans)<<endl;
+        int CurrentMax = Score(ans);
         for (int t = 1; t <= TryMax; t++) {
-            Greedy();
-            int CurrentMax = score(ans);
-            int L = random(1, N - 1);
-            int R = random(1, N - 1);
+            int L = random(1, N);
+            int R = random(1, N);
             if (L > R)swap(L, R);
             reverse(ans.begin() + L, ans.begin() + R);
 
-            double NewScore = score(ans);
+            double NewScore = Score(ans);
 
-            double T = 30.00 - 28.00 * t / TryMax;
-            double diff = (CurrentMax - NewScore) / T;
-            double Probability = exp(min(0.0, diff));
-            if (randDouble() < Probability)CurrentMax = NewScore;
-            else reverse(ans.begin() + L, ans.begin() + R);
+            double T = 10.00 - 9.00 * t / TryMax;
+            double difference = (CurrentMax-NewScore)/T;
+            double P = exp(min(0.0,difference));
+            if(RandDouble()<P)CurrentMax=NewScore;
+            else reverse(ans.begin()+L,ans.begin()+R);
+        }
+    }
+public:
+
+    void Scan(int _N) {      //OK
+        X.resize(_N), Y.resize(_N);
+        N = _N;
+        rep(i, N) {
+            cin >> X[i] >> Y[i];
         }
     }
     void solve() {
+        //Climb();
+        Greedy();
+        Climb();
         Yakinamasi();
-        show();
+        Show();
+        //cout<<Score(ans)<<endl;
+        //cout<<1e6/Score(ans)<<endl;
+        //cout<<time<<endl;
     }
 };
 int main() {
     int N;
     cin >> N;
     Solve solver;
-    solver.scan(N);
+    solver.Scan(N);
     solver.solve();
 }
