@@ -17,21 +17,20 @@ const int dy[4] = { 0,1,0,-1 };
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    int n;
-    cin>>n;
-    vector<int> x(n),y(n),h(n);
-    rep(i,n)cin>>x[i]>>y[i]>>h[i];
-    for(int cx=0;cx<=100;cx++)for(int cy=0;cy<=100;cy++){
-        auto dist=[&](int xx,int yy){return abs(cx-xx)+abs(cy-yy);};
-        int H=-INF;
-        rep(i,n)if(h[i]>0)H=h[i]+dist(x[i],y[i]);
-        bool fl=true;
-        rep(i,n){
-            if(max(0,H-dist(x[i],y[i]))!=h[i])fl=false;
-        }
-        if(fl){
-            printf("%d %d %d\n",cx,cy,H);
-            return 0;
-        }
+    int N,T;cin>>N>>T;
+    vector<ll> a={0},b={0};
+    rep(i,N){
+        int aa;
+        cin>>aa;
+        for(int s=a.size();s--;)a.push_back(a[s]+aa);
+        swap(a,b);
     }
+    sort(all(a),greater());
+    ll ans=0;
+    for(auto&s:b){
+        if(s>T)continue;
+        auto t=*lower_bound(all(a),T-s,greater());
+        if(s+t<=T)chmax(ans,s+t);
+    }
+    cout<<ans<<endl;
 }

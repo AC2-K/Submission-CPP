@@ -1,40 +1,38 @@
-#include<iostream>
-#include<vector>
-#include<string>
-#include<algorithm>
-#include<map>
+#include<bits/stdc++.h>
 using namespace std;
-//#include<atcoder/all>
-//using namespace atcoder;
+//cout << fixed << setprecision(10);
 #define rep(i, N)  for(int i=0;i<(N);i++)
 #define all(x) (x).begin(),(x).end()
+#define popcount(x) __builtin_popcount(x)
 using ll = long long;
 using ld = long double;
-using Graph = vector<vector<int>>;
+using graph = vector<vector<int>>;
 using P = pair<int, int>;
 const int INF = 1e9;
 const ll INFL = 1e18;
+const ld eps = ld(0.000000001);
+const long double pi = 3.141592653589793;
 const ll MOD = 1e9 + 7;
+const ll MOD2 = 998244353;
 const int dx[4] = { 1,0,-1,0 };
 const int dy[4] = { 0,1,0,-1 };
+/*
+template<class T>using v=vector<T>;
+template<class T>using vv=v<v<T>>;
+template<class T>using vvv=v<vv<T>>;
+template<class T>using vvvv=v<vvv<T>>;
+*/
+template<class T>void chmax(T&x,T y){if(x<y)x=y;}
+template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    int N,T;
-    cin>>N>>T; 
-    int lastPush=-1;
-    rep(i,N){
-        int t;
-        cin>>t;
-        lastPush=max(lastPush,t);
-        imos[t]++;
-        imos[t+T]--;
-    }
-    vector<int> sums(lastPush+1);
-    for(int i=0;i<lastPush;i++){
-        sums[i+1]=sums[i]+imos[i+1];
-    }
+    int n,t;
+    cin>>n>>t;
+    vector<int> x(n);
+    for(auto&xx:x)cin>>xx;
     ll ans=0;
-    for(int i=0;i<=lastPush;i++){
-        if(sums[i]>0)ans++;
+    for(int i=1;i<n;i++){
+        if(x[i]<x[i-1]+t)ans+=x[i]-x[i-1];
+        else ans+=t;
     }
-    cout<<ans<<endl;
+    cout<<ans+t<<endl;
 }

@@ -25,31 +25,13 @@ template<class T>using vvvv=v<vvv<T>>;
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    int n;
-    cin>>n;
-    auto check=[&](ll num)-> bool {
-        if(num>n)return false;
-        bool fl1=false,fl2=false,fl3=false;
-        auto s=to_string(num);
-        for(auto c:s){
-            if(c=='3')fl1=true;
-            else if(c=='7')fl2=true;
-            else if(c=='5')fl3=true;
-        }
-        return fl1&&fl2&&fl3;
-    };
-    int ans=0;
-    const int vec[]={7,5,3};
-    auto dfs=[&](auto f,ll num)-> void {
-        if(check(num))ans++;
-        rep(i,3){
-            num*=10;
-            num+=vec[i];
-            if(num<=n)f(f,num);
-            num/=10;
-        }
-        return;
-    };
-    dfs(dfs,0);
+    int r1,c1,r2,c2;
+    cin>>r1>>c1>>r2>>c2;
+    int dx=r1-r2;
+    int dy=c1-c2;
+    int ans=3;
+    if(dx==0&&dy==0)ans=0;
+    else if(dx==dy||dx==-dy||abs(dx)+abs(dy)<=3)ans=1;
+    else if(abs(dx)%2==abs(dy)%2||abs(dx+dy)<=3||abs(dx-dy)<=3||abs(dx)+abs(dy)<=6)ans=2;
     cout<<ans<<endl;
 }

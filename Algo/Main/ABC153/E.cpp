@@ -3,7 +3,6 @@ using namespace std;
 //cout << fixed << setprecision(10);
 #define rep(i, N)  for(int i=0;i<(N);i++)
 #define all(x) (x).begin(),(x).end()
-#define popcount(x) __builtin_popcount(x)
 using ll = long long;
 using ld = long double;
 using Graph = vector<vector<int>>;
@@ -17,21 +16,14 @@ const int dy[4] = { 0,1,0,-1 };
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    int n;
-    cin>>n;
-    vector<int> x(n),y(n),h(n);
-    rep(i,n)cin>>x[i]>>y[i]>>h[i];
-    for(int cx=0;cx<=100;cx++)for(int cy=0;cy<=100;cy++){
-        auto dist=[&](int xx,int yy){return abs(cx-xx)+abs(cy-yy);};
-        int H=-INF;
-        rep(i,n)if(h[i]>0)H=h[i]+dist(x[i],y[i]);
-        bool fl=true;
-        rep(i,n){
-            if(max(0,H-dist(x[i],y[i]))!=h[i])fl=false;
-        }
-        if(fl){
-            printf("%d %d %d\n",cx,cy,H);
-            return 0;
-        }
+    int H,N;
+    cin>>H>>N;
+    vector<int> A(N),B(N);
+    rep(i,N)cin>>A[i]>>B[i];
+    vector<int> dp(H+1,INF);    //@dp:dp[i]=(Healthをi減らすためにするために必要なコスト)
+    dp[0]=0;
+    rep(i,H)rep(j,N){
+        chmin(dp[min(H,i+A[j])],dp[i]+B[j]);
     }
+    cout<<dp[H]<<endl;
 }

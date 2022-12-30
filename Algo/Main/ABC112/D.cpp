@@ -16,26 +16,30 @@ const int dx[4] = { 1,0,-1,0 };
 const int dy[4] = { 0,1,0,-1 };
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
-/*
-@A:圧縮したい列
-@B:圧縮したあとの列
-*/
-void compress(vector<int> A, vector<int>&B) {
-    vector<int> T;
-    rep(i, A.size())T.push_back(A[i]);
-    sort(all(T));
-    T.erase(unique(all(T)), T.end());    //重複消去
-    rep(i, A.size()) {
-        int pos = lower_bound(all(T), A[i]) - T.begin();
-        B.push_back(pos);
+vector<pair<ll, ll>> fact(ll n) {
+    vector<pair<ll, ll>> ret;
+    for (ll div = 2; div * div <= n; div++) {
+        if (n % div != 0)continue;
+        ll exp = 0;
+        while (n % div == 0) {
+            exp++;
+            n /= div;
+        }
+        ret.push_back(make_pair(div, exp));
     }
+    if (n != 1)ret.push_back(make_pair(n, 1));
+    return ret;
 }
 int main() {
-    int n;
-    cin>>n;
-    vector<int> a(n);
-    for(auto&aa:a)cin>>aa;
-    vector<int> b;
-    compress(a,b);
-    for(auto&bb:b)cout<<bb<<endl;
+    int n,m;
+    cin>>n>>m;
+    //g(sum(r))==m <=> sum(r)==(m/g)>=n =>m/n>=g
+    vector<int> divs;
+    for(int d=1;d*d<=m;d++)if(m%d==0)divs.push_back(d),divs.push_back(m/d);
+    divs.push_back(m);
+    int ans=1;
+    for(auto g:divs){
+        if(n<=m/g)chmax(ans,g);
+    }
+    cout<<ans<<endl;
 }
