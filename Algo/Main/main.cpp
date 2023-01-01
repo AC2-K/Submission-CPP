@@ -6,40 +6,65 @@ using namespace std;
 #define popcount(x) __builtin_popcount(x)
 using ll = long long;
 using ld = long double;
-using Graph = vector<vector<int>>;
+using graph = vector<vector<int>>;
 using P = pair<int, int>;
 const int INF = 1e9;
 const ll INFL = 1e18;
+const ld eps = ld(0.000000001);
+const long double pi = 3.141592653589793;
 const ll MOD = 1e9 + 7;
 const ll MOD2 = 998244353;
 const int dx[4] = { 1,0,-1,0 };
 const int dy[4] = { 0,1,0,-1 };
+/*
+template<class T>using v=vector<T>;
+template<class T>using vv=v<v<T>>;
+template<class T>using vvv=v<vv<T>>;
+template<class T>using vvvv=v<vvv<T>>;
+*/
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
-vector<pair<ll, ll>> fact(ll n) {
-    vector<pair<ll, ll>> ret;
-    for (ll div = 2; div * div <= n; div++) {
-        if (n % div != 0)continue;
-        ll exp = 0;
-        while (n % div == 0) {
-            exp++;
-            n /= div;
+long long solve(int n,const vector<ll>&x,const vector<ll>&y,const vector<ll>&p) {
+    auto check=[&](ll S)-> bool {
+        vector<vector<bool>> g(n,vector<bool>(n,false));
+        rep(i,n)rep(j,n){
+            if(i==j){
+                g[i][j]=true;
+            }
+            ll dx=abs(x[i]-x[j]);
+            ll dy=abs(y[i]-y[j]);
+            if(S*p[i]>=dx+dy)g[i][j]=true;
         }
-        ret.push_back(make_pair(div, exp));
+        rep(k,n)rep(i,n)rep(j,n){
+            if(g[i][k]&&g[k][j])g[i][j]=true;
+        }
+        rep(s,n){
+            bool fl=true;
+            rep(v,n){
+                if(!g[s][v]){
+                    fl=false;
+                }
+            }
+            if(fl)return true;
+        }   
+        return false;
+    };
+
+    ll ok=4ll*INF;
+    ll ng=0;
+    while(abs(ng-ok)>1){
+        ll mid=ok+(ng-ok)/2;
+        if(check(mid))ok=mid;
+        else ng=mid;
     }
-    if (n != 1)ret.push_back(make_pair(n, 1));
-    return ret;
+    return ok;
 }
-int main() {
-    int n,m;
-    cin>>n>>m;
-    //g(sum(r))==m <=> sum(r)==(m/g)>=n =>m/n>=g
-    vector<int> divs;
-    for(int d=1;d*d<=m;d++)if(m%d==0)divs.push_back(d),divs.push_back(m/d);
-    divs.push_back(m);
-    int ans=1;
-    for(auto g:divs){
-        if(n<=m/g)chmax(ans,g);
+int main(){
+    int n;
+    cin>>n;
+    vector<ll> x(n),y(n),p(n);
+    rep(i,n){
+        cin>>x[i]>>y[i]>>p[i];
     }
-    cout<<ans<<endl;
+    cout<<solve(n,x,y,p)<<endl;
 }
