@@ -27,6 +27,5 @@ template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
     int n;
     cin>>n;
-    cout<<2*n<<endl;
-    printf("HELLO");
+    cout<<n+1<<endl;
 }
