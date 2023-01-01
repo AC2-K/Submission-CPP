@@ -28,5 +28,5 @@ int main() {
     int n;
     cin>>n;
     cout<<2*n<<endl;
-    prinf("HELLO");
+    printf("HELLO");
 }
