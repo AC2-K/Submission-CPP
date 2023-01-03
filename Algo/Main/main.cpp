@@ -22,40 +22,48 @@ template<class T>using vv=v<v<T>>;
 template<class T>using vvv=v<vv<T>>;
 template<class T>using vvvv=v<vvv<T>>;
 */
-template<class T>inline void chmax(T&x,T y){if(x<y)x=y;}
-template<class T>inline void chmin(T&x,T y){if(x>y)x=y;}
+template<class T>void chmax(T&x,T y){if(x<y)x=y;}
+template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    int n;
-    scanf("%d",&n);
+    assert(1==1);
+    int n,q;
+    cin>>n>>q;
+    vector<int> x(n);
+    rep(i,n)cin>>x[i];
     graph g(n);
     rep(i,n-1){
-        int s,t;
-        scanf("%d %d",&s,&t);
-        s--;
-        t--;
-        g[s].push_back(t);
-        g[t].push_back(s);
+        int a,b;
+        cin>>a>>b;
+        a--;
+        b--;
+        g[a].emplace_back(b);
+        g[b].emplace_back(a);
     }
-    int now_R=1;    //葉の区間を決めておく。
-    vector<P> ans(n);
+    vector<multiset<int>> SubTree(n);    //上位20個もっとけばいい
     auto dfs=[&](auto f,int v,int par=-1)-> void {
-        if(g[v].size()==1&&g[v][0]==par){
-            ans[v]=P(now_R,now_R);
-            now_R++;
-        }else{
-            int l=INF;
-            int r=-INF;
-            for(auto nex:g[v]){
-                if(nex==par)continue;
-                f(f,nex,v);
-                chmin(l,ans[nex].first);
-                chmax(r,ans[nex].second);
+        SubTree[v].insert(x[v]);
+        if(g[v].size()==1&&g[v][0]==par)return; //葉なら放置
+
+        for(auto nex:g[v]){
+            if(nex==par)continue;
+            f(f,nex,v);
+            for(auto el:SubTree[nex]){
+                 SubTree[v].insert(el);
             }
-            ans[v]=P(l,r);
+        }
+        while(SubTree[v].size()>20){
+            SubTree[v].erase(SubTree[v].find(*SubTree[v].begin()));
         }
     };
     dfs(dfs,0);
-    rep(v,n){
-        printf("%d %d\n",ans[v].first,ans[v].second);
+    while(q--){
+        int v,k;
+        cin>>v>>k;
+        v--;
+        auto itr=SubTree[v].end();
+        rep(i,k){
+            itr--;
+        }
+        cout<<(*itr)<<endl;
     }
 }
