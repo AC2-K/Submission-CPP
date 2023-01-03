@@ -24,99 +24,45 @@ template<class T>using vvvv=v<vvv<T>>;
 */
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
+vector<bool> makePrimes(int N) {
+    vector<bool> primes(N + 1, true);
 
-class DSU
-{
-private:
-    vector<int> par, rank, siz;
-    int N;
+    primes[0] = primes[1] = false;
 
-public:
-    DSU(int n) : par(n, -1), rank(n, 0), siz(n, 1), N(n) {}
-
-    int root(int x)
-    {
-        if (par[x] == -1)
-            return x;
-        else
-            return par[x] = root(par[x]);
+    // ふるい
+    for (int p = 2; p <= N; ++p) {
+        if (!primes[p]) continue;
+        for (int i = 2; p * i <= N; i++) {
+            primes[p * i] = false;
+        }
     }
 
-    bool same(int x, int y)
-    {
-        return root(x) == root(y);
-    }
-
-    bool merge(int x, int y)
-    {
-        int rx = root(x), ry = root(y);
-        if (rx == ry)
-            return false;
-
-        if (rank[rx] < rank[ry])
-            swap(rx, ry);
-        par[ry] = rx; 
-        
-        siz[rx] += siz[ry];
-        return true;
-    }
-
-    int size(int x)
-    {
-        return siz[root(x)];
-    }
-    int connect()
-    {
-        int cnt = 0;
-        for (int i = 0; i < N; i++)
-            if (root(i) == i)
-                cnt++;
-        return cnt;
-    }
-};
-struct edge{
-    int v1;
-    int v2;
-    edge(int a,int b):v1(a),v2(b){  };
-};
+    return primes;
+}
 int main() {
-    int n,m,e;
-    cin>>n>>m>>e;
-    vector<edge> edges;
-    rep(i,e){
-        int s,t;
-        cin>>s>>t;
-        s--;
-        t--;
-        edges.push_back(edge(s,t));
+    ll n;
+    cin>>n;
+    const int MAX=1e6;
+    auto prime_check=makePrimes(MAX);
+    vector<ll> p;
+    for(int i=1;i<=MAX;i++){
+        if(prime_check[i])p.push_back(i);
     }
-    int q;
-    cin>>q;
-    vector<int> queries;
-    vector<bool> cut(e,false);
-    rep(i,q){
-        int x;
-        cin>>x;
-        x--;
-        queries.push_back(x);
-        cut[x]=true;
+    int siz=p.size();
+    auto check=[&](ll p,ll q)-> bool{
+        return p*q*q<=n/q;
+    };
+    ll ans=0;
+    rep(i,siz-1){
+        if(!check(p[i],p[i+1]))break;
+        int ng=siz;
+        int ok=i+1;
+        while(abs(ng-ok)>1){
+            int mid=(ng+ok)/2;
+            if(check(p[i],p[mid]))ok=mid;
+            else ng=mid;
+        }
+        ans+=ok-i;
     }
-
-    reverse(all(queries));
-    DSU dsu(n+m);
-    rep(i,e){
-        if(cut[i])continue;
-        dsu.merge(edges[i].v1,edges[i].v2);
-    }
-    for(int i=n;i+1<n+m;i++){
-        dsu.merge(i,i+1);
-    }
-    vector<int> answers;
-    rep(i,q){
-        answers.push_back(dsu.size(n)-m);
-        int x=queries[i];
-        dsu.merge(edges[x].v1,edges[x].v2);
-    }
-    reverse(all(answers));
-    for(auto a:answers)cout<<a<<endl;
+    cout<<ans<<endl;
 }
