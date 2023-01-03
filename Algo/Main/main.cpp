@@ -22,87 +22,40 @@ template<class T>using vv=v<v<T>>;
 template<class T>using vvv=v<vv<T>>;
 template<class T>using vvvv=v<vvv<T>>;
 */
-template<class T>void chmax(T&x,T y){if(x<y)x=y;}
-template<class T>void chmin(T&x,T y){if(x>y)x=y;}
-
-class DSU
-{
-private:
-    vector<int> par, rank, siz;
-    int N;
-
-public:
-    DSU(int n) : par(n, -1), rank(n, 0), siz(n, 1), N(n) {}
-
-    int root(int x)
-    {
-        if (par[x] == -1)
-            return x;
-        else
-            return par[x] = root(par[x]);
-    }
-
-    bool same(int x, int y)
-    {
-        return root(x) == root(y);
-    }
-
-    bool merge(int x, int y)
-    {
-        int rx = root(x), ry = root(y);
-        if (rx == ry)
-            return false;
-
-        if (rank[rx] < rank[ry])
-            swap(rx, ry);
-        par[ry] = rx; 
-        
-        siz[rx] += siz[ry];
-        return true;
-    }
-
-    int size(int x)
-    {
-        return siz[root(x)];
-    }
-    int connect()
-    {
-        int cnt = 0;
-        for (int i = 0; i < N; i++)
-            if (root(i) == i)
-                cnt++;
-        return cnt;
-    }
-};
+template<class T>inline void chmax(T&x,T y){if(x<y)x=y;}
+template<class T>inline void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    int N,M;
-    cin>>N>>M;
-    vector<int> A;
-    rep(i,M){
-        int a;
-        cin>>a;
-        A.push_back(a);
+    int n;
+    scanf("%d",&n);
+    graph g(n);
+    rep(i,n-1){
+        int s,t;
+        scanf("%d %d",&s,&t);
+        s--;
+        t--;
+        g[s].push_back(t);
+        g[t].push_back(s);
     }
-    A.push_back(0);
-    A.push_back(N+1);
-    sort(all(A));
-    vector<int> x;
-    rep(i,M+1){
-        x.push_back(A[i+1]-A[i]-1);
-    }
-
-    sort(all(x),greater<>());
-    while(!x.empty()){
-        if(x.back()==0){
-            x.pop_back();
+    int now_R=1;    //葉の区間を決めておく。
+    vector<P> ans(n);
+    auto dfs=[&](auto f,int v,int par=-1)-> void {
+        if(g[v].size()==1&&g[v][0]==par){
+            ans[v]=P(now_R,now_R);
+            now_R++;
         }else{
-            break;
+            int l=INF;
+            int r=-INF;
+            for(auto nex:g[v]){
+                if(nex==par)continue;
+                f(f,nex,v);
+                chmin(l,ans[nex].first);
+                chmax(r,ans[nex].second);
+            }
+            ans[v]=P(l,r);
         }
+    };
+    dfs(dfs,0);
+    rep(v,n){
+        printf("%d %d\n",ans[v].first,ans[v].second);
     }
-    int k=x.back();
-    ll ans=0;
-    for(auto xx:x){
-        ans+=(xx+k-1)/k;
-    }
-    cout<<ans<<endl;
 }
