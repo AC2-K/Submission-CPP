@@ -28,12 +28,12 @@ int main() {
     int n,p;
     cin>>n>>p;
     vector<int> a(n);
-    for(auto&aa:a)cin>>aa;
+    for(auto&aa:a)cin>>aa,aa&=1;
     const int mod=2;
     vector<vector<ll>> dp(n+1,vector<ll>(mod));
     dp[0][0]=1;
     rep(i,n)rep(j,mod){
-        dp[i+1][(j+a[i])%2]+=dp[i][j];
+        dp[i+1][(j+a[i]&1)&1]+=dp[i][j];
         dp[i+1][j]+=dp[i][j];
     }
     cout<<dp[n][p]<<endl;
