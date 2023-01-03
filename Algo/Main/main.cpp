@@ -24,45 +24,44 @@ template<class T>using vvvv=v<vvv<T>>;
 */
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
-vector<bool> makePrimes(int N) {
-    vector<bool> primes(N + 1, true);
-
-    primes[0] = primes[1] = false;
-
-    // ふるい
-    for (int p = 2; p <= N; ++p) {
-        if (!primes[p]) continue;
-        for (int i = 2; p * i <= N; i++) {
-            primes[p * i] = false;
+vector<pair<ll, ll>> fact(ll n) {
+    vector<pair<ll, ll>> ret;
+    for (ll div = 2; div * div <= n; div++) {
+        if (n % div != 0)continue;
+        ll exp = 0;
+        while (n % div == 0) {
+            exp++;
+            n /= div;
         }
+        ret.push_back(make_pair(div, exp));
     }
-
-    return primes;
+    if (n != 1)ret.push_back(make_pair(n, 1));
+    return ret;
 }
 int main() {
-    ll n;
-    cin>>n;
-    const int MAX=1e6;
-    auto prime_check=makePrimes(MAX);
-    vector<ll> p;
-    for(int i=1;i<=MAX;i++){
-        if(prime_check[i])p.push_back(i);
-    }
-    int siz=p.size();
-    auto check=[&](ll p,ll q)-> bool{
-        return p*q*q<=n/q;
-    };
-    ll ans=0;
-    rep(i,siz-1){
-        if(!check(p[i],p[i+1]))break;
-        int ng=siz;
-        int ok=i+1;
-        while(abs(ng-ok)>1){
-            int mid=(ng+ok)/2;
-            if(check(p[i],p[mid]))ok=mid;
-            else ng=mid;
+    ll k;
+    cin>>k;
+    auto facter=fact(k);
+    vector<ll> p_list;
+    auto is_ok=[&](ll n)-> bool {
+        for(auto pf:facter){
+            ll p=pf.first;
+            ll res=0;
+            ll pow=p;
+            while(n/pow!=0){
+                res+=n/pow;
+                pow*=p;
+            }
+            if(pf.second>res)return false;
         }
-        ans+=ok-i;
+        return true;
+    };
+    ll ok=k;
+    ll ng=0;
+    while(abs(ng-ok)>1){
+        ll mid=(ng+ok)/2;;
+        if(is_ok(mid))ok=mid;
+        else ng=mid;
     }
-    cout<<ans<<endl;
+    cout<<ok<<endl;
 }
