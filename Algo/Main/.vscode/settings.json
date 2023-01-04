@@ -3,6 +3,8 @@
         "utility": "cpp",
         "queue": "cpp",
         "vector": "cpp",
-        "compare": "cpp"
+        "compare": "cpp",
+        "cmath": "cpp",
+        "iostream": "cpp"
     }
 }
