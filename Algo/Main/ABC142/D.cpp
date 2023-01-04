@@ -6,12 +6,10 @@ using namespace std;
 #define popcount(x) __builtin_popcount(x)
 using ll = long long;
 using ld = long double;
-using graph = vector<vector<int>>;
+using Graph = vector<vector<int>>;
 using P = pair<int, int>;
 const int INF = 1e9;
 const ll INFL = 1e18;
-const ld eps = ld(0.000000001);
-const long double pi = 3.141592653589793;
 const ll MOD = 1e9 + 7;
 const ll MOD2 = 998244353;
 const int dx[4] = { 1,0,-1,0 };
@@ -24,32 +22,23 @@ template<class T>using vvvv=v<vvv<T>>;
 */
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
+vector<pair<ll, ll>> fact(ll n) {
+    vector<pair<ll, ll>> ret;
+    for (ll div = 2; div * div <= n; div++) {
+        if (n % div != 0)continue;
+        ll exp = 0;
+        while (n % div == 0) {
+            exp++;
+            n /= div;
+        }
+        ret.push_back(make_pair(div, exp));
+    }
+    if (n != 1)ret.push_back(make_pair(n, 1));
+    return ret;
+}
 int main() {
-    int n,m;
-    cin>>n>>m;
-    vector<int> a(m);
-    vector<vector<int>> c(m);
-    rep(i,m){
-        int b;
-        cin>>a[i]>>b;
-        rep(j,b){
-            int cc;
-            cin>>cc;
-            cc--;
-            c[i].push_back(cc);
-        }
-    }
-    vector<int> dp(1<<n,INF);
-    dp[0]=0;
-    rep(i,m)rep(bit,1<<n){
-        int next_bit=bit;
-        for(auto cc:c[i]){
-            next_bit|=1<<cc;
-        }
-        chmin(dp[next_bit],dp[bit]+a[i]);
-    }
-
-    int ans=dp.back();
-    if(ans>=INF)ans=-1;
-    cout<<ans<<endl;
+    ll a,b;
+    cin>>a>>b;
+    ll GCD=gcd(a,b);
+    cout<<fact(GCD).size()+1<<endl;
 }
