@@ -6,5 +6,4 @@
 ### JOI
 - JOIの過去問で、解いたやつをぶち込んでる
 ### Main
-- AtCoder上のコンテスト(JOI過去問を除く)の提出
-- 鉄則本とか、TypicalDPとかTypical90とかが混じってる
+- AtCoder上のコンテストの提出
