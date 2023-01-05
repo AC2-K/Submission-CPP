@@ -6,136 +6,53 @@ using namespace std;
 #define popcount(x) __builtin_popcount(x)
 using ll = long long;
 using ld = long double;
-using Graph = vector<vector<int>>;
+using graph = vector<vector<int>>;
 using P = pair<int, int>;
-const int INF = 1e9;
-const ll INFL = 1e18;
+const int inf = 1e9;
+const ll infl = 1e18;
+const ld eps = ld(0.000000001);
+const long double pi = acos(-1);
 const ll MOD = 1e9 + 7;
 const ll MOD2 = 998244353;
 const int dx[4] = { 1,0,-1,0 };
 const int dy[4] = { 0,1,0,-1 };
+/*
+template<class T>using v=vector<T>;
+template<class T>using vv=v<v<T>>;
+template<class T>using vvv=v<vv<T>>;
+template<class T>using vvvv=v<vvv<T>>;
+*/
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
-
-template <typename X>
-class SegmentTree {
-    using fx = function<X(X, X)>;
-    int n;
-    fx op;
-    const X ex;
-    vector<X> dat;
-
-    X query(int a, int b, int k, int l, int r) {
-        if (r <= a || b <= l) {
-            return ex;
-        }
-        else if (a <= l && r <= b) {
-            return dat[k];
-        }
-        else {
-            X vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
-            X vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
-            return op(vl, vr);
-        }
-    }
-public:
-    SegmentTree(int n_, fx fx_, X ex_) : n(), op(fx_), ex(ex_), dat(n_ * 4, ex_) {
-        int x = 1;
-        while (n_ > x) {
-            x *= 2;
-        }
-        n = x;
-    }
-    void set(int pos, X x) { 
-        dat[pos + n - 1] = x;
-    }
-    void build() {
-        for (int k = n - 2; k >= 0; k--) dat[k] = op(dat[2 * k + 1], dat[2 * k + 2]);
-    }
-
-    void update(int pos, X x) {
-        pos += n - 1;
-        dat[pos] = x;
-        while (pos > 0) {
-            pos = (pos - 1) / 2;
-            dat[pos] = op(dat[pos * 2 + 1], dat[pos * 2 + 2]);
-        }
-    }
-
-    X query(int a, int b) { 
-        return query(a, b, 0, 0, n); 
-    }
-
-    X get(int pos){return dat[pos+n-1];}
-};
-vector<int> ans(int n,const Graph&g,const vector<int>&a){
-    SegmentTree<int> seg(n+1,[](int a,int b){return max(a,b);},0);    //seg[i]="back=i"
-    vector<int> dp(n,-1);
-    auto dfs=[&](auto f,int v)-> void {
-        auto pre=seg.get(a[v]);
-        dp[v]=max(pre,seg.query(0,a[v])+1);
-        seg.update(a[v],max(pre,dp[v]));
-        for(auto nex:g[v]){
-            if(dp[nex]!=-1)continue;
-            f(f,nex);
-        }
-        seg.update(a[v],pre);
-    };
-    dfs(dfs,0);
-    return dp;
-}
-
-template<class T>int LIS(vector<T> &a,bool strict=true) {
-    int n=(int)a.size();
-    vector<T> aval;
-    for(auto aa:a)aval.push_back(aa);
-    sort(all(aval));
-    aval.erase(unique(all(aval)),aval.end());
-    SegmentTree<int> dp(n+1,[](int a,int b){return max(a,b);},0);       //dp[i]=最後尾がiとなるようなLISの最大値
-    int res=0;
-    for(int i=0;i<n;i++){
-        int h=lower_bound(all(aval),a[i])-aval.begin();
-        h++;
-        int upper=h;
-        if(!strict)upper++;
-        int A=dp.query(0,upper);
-        if(dp.query(h,h+1)<A+1){
-            dp.update(h,A+1);
-            chmax(res,A+1);
-        }
-    }
-    return res;
-}
-vector<int> naive(int n,const Graph&g,const vector<int>&a){
-    vector<int> dp(n,-1);
-    vector<int> vec;
-    auto dfs=[&](auto f,int v)-> void {
-        vec.push_back(a[v]);
-        dp[v]=LIS(vec);
-        for(auto nex:g[v]){
-            if(dp[nex]!=-1)continue;
-            f(f,nex);
-        }
-        vec.pop_back();
-    };
-    dfs(dfs,0);
-    return dp;
-}
 int main() {
     int n;
     cin>>n;
-    Graph g(n);
     vector<int> a(n);
     for(auto&aa:a)cin>>aa;
+    graph g(n);
     rep(i,n-1){
-        int a,b;
-        cin>>a>>b;
-        a--;
-        b--;
-        g[a].push_back(b);
-        g[b].push_back(a);
+        int u,v;
+        cin>>u>>v;
+        u--;
+        v--;
+        g[u].push_back(v);
+        g[v].push_back(u);
     }
-    const vector<int> dp=ans(n,g,a);
-    const vector<int> dp2=naive(n,g,a);
-    rep(i,n)cout<<dp[i]<<' '<<dp2[i]<<endl;
+    vector<int> dp(n+1,inf);   //dp[l]:=長さlのLISを作るとき、末尾の最小値
+    vector<int> ans(n);   //ans[v]:=0-vパス上のLIS
+    
+    auto dfs=[&](auto f,int v,int par=-1)-> void {
+        auto it=lower_bound(all(dp),a[v]);  //a[v]
+        ll pre=*it;
+        *it=a[v];
+        ans[v]=lower_bound(all(dp),inf)-dp.begin();
+        for(auto nex:g[v]){
+            if(nex==par)continue;
+            f(f,nex,v);
+        }
+        *it=pre;
+    };
+    dfs(dfs,0);
+
+    rep(v,n)cout<<ans[v]<<'\n';
 }

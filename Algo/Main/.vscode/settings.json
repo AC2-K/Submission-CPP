@@ -5,6 +5,7 @@
         "vector": "cpp",
         "compare": "cpp",
         "cmath": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "xutility": "cpp"
     }
 }
