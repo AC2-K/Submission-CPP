@@ -6,85 +6,52 @@ using namespace std;
 #define popcount(x) __builtin_popcount(x)
 using ll = long long;
 using ld = long double;
-using Graph = vector<vector<int>>;
+using graph = vector<vector<int>>;
 using P = pair<int, int>;
 const int INF = 1e9;
 const ll INFL = 1e18;
+const ld eps = ld(0.000000001);
+const long double pi = 3.141592653589793;
 const ll MOD = 1e9 + 7;
 const ll MOD2 = 998244353;
+/*
 const int dx[4] = { 1,0,-1,0 };
 const int dy[4] = { 0,1,0,-1 };
+*/
+const int dx[]={1,1,1,0,0,-1,-1,-1,0};
+const int dy[]={1,0,-1,1,-1,1,0,-1,0};
+/*
+template<class T>using v=vector<T>;
+template<class T>using vv=v<v<T>>;
+template<class T>using vvv=v<vv<T>>;
+template<class T>using vvvv=v<vvv<T>>;
+*/
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
-
-template <typename X>
-class SegmentTree {
-    using fx = function<X(X, X)>;
-    int n;
-    fx op;
-    const X ex;
-    vector<X> dat;
-
-    X query(int a, int b, int k, int l, int r) {
-        if (r <= a || b <= l) {
-            return ex;
-        }
-        else if (a <= l && r <= b) {
-            return dat[k];
-        }
-        else {
-            X vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
-            X vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
-            return op(vl, vr);
-        }
-    }
-public:
-    SegmentTree(int n_, fx fx_, X ex_) : n(), op(fx_), ex(ex_), dat(n_ * 4, ex_) {
-        int x = 1;
-        while (n_ > x) {
-            x *= 2;
-        }
-        n = x;
-    }
-    void set(int pos, X x) { 
-        dat[pos + n - 1] = x;
-    }
-    void build() {
-        for (int k = n - 2; k >= 0; k--) dat[k] = op(dat[2 * k + 1], dat[2 * k + 2]);
-    }
-
-    void update(int pos, X x) {
-        pos += n - 1;
-        dat[pos] = x;
-        while (pos > 0) {
-            pos = (pos - 1) / 2;
-            dat[pos] = op(dat[pos * 2 + 1], dat[pos * 2 + 2]);
-        }
-    }
-
-    X query(int a, int b) { 
-        return query(a, b, 0, 0, n); 
-    }
-
-    X get(int pos){return dat[pos+n-1];}
-};
 int main() {
+    map<int,map<int,int>> cnt;
+    int h,w;
+    cin>>h>>w;
     int n;
     cin>>n;
-    SegmentTree<int> A(n,[](int a,int b){return gcd(a,b);},0);
+    vector<int> a(n),b(n);
     rep(i,n){
-        int a;
-        cin>>a;
-        A.set(i,a);
+        cin>>a[i]>>b[i];
+        cnt[a[i]][b[i]]++;
     }
-    A.build();
-    int ans=-1;
-    for(int i=1;i<n-1;i++){
-        int L=A.query(0,i);
-        int R=A.query(i+1,n);
-        chmax(ans,gcd(L,R));
+    int ans=0;
+    rep(i,n){
+        rep(ii,9){
+            int si=a[i]+dx[ii];
+            int sj=b[i]+dy[ii];
+            int res=0;
+            rep(iii,9){
+                int pi=si+dx[iii];
+                int pj=sj+dy[iii];
+                res+=cnt[pi][pj];
+            }
+            chmax(ans,res);
+        }
     }
-    chmax(ans,A.query(1,n));
-    chmax(ans,A.query(0,n-1));
     cout<<ans<<endl;
 }
