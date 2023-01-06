@@ -7,7 +7,7 @@ using namespace std;
 using ll = long long;
 using ld = long double;
 using graph = vector<vector<int>>;
-using P = pair<int, int>;
+using P = pair<ll, ll>;
 const int inf = 1e9;
 const ll infl = 1e18;
 const ld eps = ld(0.000000001);
@@ -25,30 +25,21 @@ template<class T>using vvvv=v<vvv<T>>;
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    queue<int> que;
-    priority_queue<int,vector<int>,greater<int>> pque;
-    int q;
-    cin>>q;
-    while(q--){
-        int t;
-        cin>>t;
-        if(t==1){
-            int x;
-            cin>>x;
-            que.push(x);
-        }else if(t==2){
-            if(pque.empty()){
-                cout<<que.front()<<endl;
-                que.pop();
-            }else{
-                cout<<pque.top()<<endl;
-                pque.pop();
-            }
-        }else{
-            while(!que.empty()){
-                pque.push(que.front());
-                que.pop();
-            }
-        }
+    int n;
+    cin>>n;
+    ll k;
+    cin>>k;
+    //操作順は関係ない
+    vector<P> ab(n);    //<-firstにval,secondにcntを突っ込む
+    for(auto&e:ab){
+        cin>>e.first>>e.second;
     }
+    sort(all(ab));
+    vector<ll> cnt(n+1);    //cnt[i]:=i回操作したとき、すでに入っている個数
+    rep(i,n){
+        cnt[i+1]=cnt[i]+ab[i].second;
+    }
+
+    ll lim=lower_bound(all(cnt),k)-cnt.begin();
+    cout<<ab[lim-1].first<<endl;
 }

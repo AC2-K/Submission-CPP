@@ -25,30 +25,24 @@ template<class T>using vvvv=v<vvv<T>>;
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    queue<int> que;
-    priority_queue<int,vector<int>,greater<int>> pque;
-    int q;
-    cin>>q;
+    int l,q;
+    cin>>l>>q;
+    set<int> cut;
+    cut.insert(l);
+    cut.insert(0);
     while(q--){
-        int t;
-        cin>>t;
-        if(t==1){
+        int c;
+        cin>>c;
+        if(c==1){
             int x;
             cin>>x;
-            que.push(x);
-        }else if(t==2){
-            if(pque.empty()){
-                cout<<que.front()<<endl;
-                que.pop();
-            }else{
-                cout<<pque.top()<<endl;
-                pque.pop();
-            }
+            cut.insert(x);
         }else{
-            while(!que.empty()){
-                pque.push(que.front());
-                que.pop();
-            }
+            int x;
+            cin>>x;
+            int up=*cut.lower_bound(x);
+            int down=*prev(cut.upper_bound(x));
+            cout<<up-down<<endl;
         }
     }
 }
