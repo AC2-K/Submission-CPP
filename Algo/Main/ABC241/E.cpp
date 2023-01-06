@@ -25,24 +25,23 @@ template<class T>using vvvv=v<vvv<T>>;
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    int n;
-    cin>>n;
-    vector<int> a(n);
+    ll n,k;
+    cin>>n>>k;
+    vector<ll> a(n);
     for(auto&aa:a)cin>>aa;
-    const int MAX_A=1e6;
-    vector<int> check(MAX_A+1,true);
-    vector<int> cnt(MAX_A+1,0);
-    for(auto&aa:a)cnt[aa]++;
-
-    for(int aa=1;aa<=MAX_A;aa++){
-        if(cnt[aa]==0)continue;
-        if(cnt[aa]>1)check[aa]=false;
-        for(int j=2*aa;j<=MAX_A;j+=aa){
-            check[j]=false;
+    const int m=60; //ceil(log k)
+    vector<vector<ll>> dp(m+1,vector<ll>(n)); //dp[i][j]:=現在j(on mod n)入っている時、2^i回操作を行う。飴の個数(mod n)
+    for(int i=0;i<n;i++){
+        dp[0][i]=a[i];
+    }
+    rep(i,m)rep(j,n){
+		dp[i + 1][j] = dp[i][j] + dp[i][(j+dp[i][j]) % n];
+    }
+    ll ans=0;
+    for(int i=m;i>=0;i--){
+        if(k&(1<<i)){
+            ans+=dp[m-i+1][ans%n];
         }
     }
-
-    int ans=0;
-    for(auto aa:a)if(check[aa])ans++;
-    cout<<ans<<'\n';
+    cout<<ans<<endl;
 }
