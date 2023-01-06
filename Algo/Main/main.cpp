@@ -25,22 +25,39 @@ template<class T>using vvvv=v<vvv<T>>;
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
-    string s;
-    cin>>s;
-    int n=s.size();
-    const int bit=32;
-    vector<vector<int>> dp(n,vector<int>(bit));  //dp[i][e]:=iから2^e経った時の位置
-    rep(i,n){
-        if(s[i]=='L')dp[i][0]=i-1;
-        else dp[i][0]=i+1;
+    ll n,x,m;
+    cin>>n>>x>>m;
+    
+    auto f=[&](ll v)-> ll {
+        return v%m*v%m;
+    };
+    //memo:v->f(v)->f2(v)->...->vのサイクルがある。
+
+    const int max_bit=55;
+    vector<vector<ll>> dp(max_bit+1,vector<ll>(m)),sum(max_bit+1,vector<ll>(m));    
+
+    //dp[v][e]:=fを2^e回合成して、vを飛ばしたところ
+    //sum[v][e]:=v+f(v)+...+u (2^e項)
+    rep(v,m){
+        dp[0][v]=f(v);
+        sum[0][v]=v;
     }
-    rep(j,bit)rep(i,n){
-        dp[i][j+1]=dp[dp[i][j]][j];
+    rep(i,max_bit)rep(v,m){
+        dp[i+1][v]=dp[i][dp[i][v]];
     }
-    vector<int> cnt(n);
-    rep(i,n){
-        cnt[dp[i][bit-1]]++;
+
+    rep(i,max_bit)rep(v,m){
+        sum[i+1][v]=sum[i][v]+sum[i][dp[i][v]];
     }
-    for(auto c:cnt)cout<<c<<' ';
-    cout<<endl;
+
+    ll cur=x;
+    ll ans=0;
+    for(int i=max_bit;i>=0;i--){
+        if(n&(1ll<<i)==0){
+            ans+=sum[i][cur];
+            cur=dp[i][cur];
+        }
+    }
+
+    cout<<ans<<endl;
 }
