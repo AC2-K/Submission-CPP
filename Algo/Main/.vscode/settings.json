@@ -6,6 +6,8 @@
         "compare": "cpp",
         "cmath": "cpp",
         "iostream": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "ios": "cpp",
+        "tuple": "cpp"
     }
 }
