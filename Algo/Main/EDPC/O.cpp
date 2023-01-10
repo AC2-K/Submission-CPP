@@ -25,4 +25,17 @@ template<class T>using vvvv=v<vvv<T>>;
 template<class T>void chmax(T&x,T y){if(x<y)x=y;}
 template<class T>void chmin(T&x,T y){if(x>y)x=y;}
 int main() {
+    int n;
+    cin>>n;
+    vector<int> a(n+1);
+    for(int i=1;i<=n;i++)cin>>a[i];
+    vector<vector<ll>> dp(n+1,vector<ll>(n+1,infl));
+    auto rec=[&](auto func,int left,int right)-> ll {
+        if(dp[left][right]!=infl)return dp[left][right];
+        if(left==right)return dp[left][right]=a[left];
+
+        return dp[left][right]=max(a[left]-func(func,left+1,right),a[right]-func(func,left,right-1));
+    };
+
+    cout<<rec(rec,1,n)<<endl;
 }
